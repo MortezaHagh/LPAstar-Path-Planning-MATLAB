@@ -6,10 +6,6 @@ clc
 clear
 close
 
-% adding paths
-addpath('D:\00-Robotics\02-Robot Path Planning\Methods\Astar-Single & Multi-MATLAB')
-addpath('D:\00-Robotics\02-Robot Path Planning\Methods\Astar-Single & Multi-MATLAB\SRPP')
-
 %% settings
 model.dist_type = 'manhattan';    % euclidean manhattan;
 model.adj_type = '4adj';          % '4adj'  '8adj'
