@@ -17,3 +17,4 @@ RUN_LPAstar.m: LPA* path planning
 
 myLPAStar: for static maps and maps with changing esdge costs
 
+![LPAstar-2](https://user-images.githubusercontent.com/32360441/169691931-da1e1326-ae4e-4dcf-bb15-92acb9276794.jpg)
