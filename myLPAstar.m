@@ -1,42 +1,42 @@
-function [model, path] = myLPAstar(model)
-
+function [Model, Path] = myLPAstar(Model)
+% LPAstar algorithm
+% moves robot to next node, then check for map changes and update path
 
 % initialization
-[G, RHS, open] = initialization_LPAstar(model);
+[G, RHS, Open] = initializeLPAstar(Model);
 
 t=1;
-newobstNode = [];
-first_startNode = model.startNode;
-final_path_nodes = [model.startNode;];
+newObstNode = [];
+finalPathNodeNumbers = [Model.Robot.startNode;];
 
 %% main procedure
-while model.startNode~=model.targetNode
+while Model.startNode~=Model.Robot.targetNode
     
     % compute shortest path
-    [G, RHS, open] = computeShortestPath(G, RHS, open, model);
+    [G, RHS, Open] = computeShortestPath(G, RHS, Open, Model);
     
     % optimal paths nodes
-    path_nodes = finalPathNodes(G, model);
+    pathNodes = finalPathNodes(G, Model);
     
     % move robot to new startNode
-    model.startNode = path_nodes(2);
-    final_path_nodes(end+1) = model.startNode;
+    Model.startNode = pathNodes(2);
+    finalPathNodeNumbers(end+1) = Model.startNode;
     t=t+1;
     
     % check for update in edge costs (obstacles)
-    [open, RHS, newobstNode, model] = checkForUpdate(open, RHS, newobstNode, model, G, t);
+    [Open, RHS, newObstNode, Model] = checkForUpdate(Open, RHS, newObstNode, Model, G, t);
     
 end
 
 %% optimal paths coordinations, nodes, directions
-path.nodes = final_path_nodes;
-path.coords = nodes2coords(path.nodes, model);
-path.dirs = nodes2dirs(path.nodes, model);
+Path.nodeNumbers = finalPathNodeNumbers;
+Path.coords = nodes2coords(Path.nodeNumbers, Model);
+Path.dirs = nodes2dirs(Path.nodeNumbers, Model);
 
 %% update model
-model.startNode = first_startNode;
-new_obst_xy = model.nodes.cord(:,newobstNode);
-model.xc = [model.xc, new_obst_xy(1,:)];
-model.yc = [model.yc, new_obst_xy(2,:)];
+Model.startNode = Model.Robot.startNode;
+newObstXY = Model.Nodes.cord(:,newObstNode);
+Model.Obst.x = [Model.Obst.x, newObstXY(1,:)];
+Model.Obst.y = [Model.Obst.y, newObstXY(2,:)];
 
 end

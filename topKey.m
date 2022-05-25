@@ -1,15 +1,16 @@
-function topnode = topKey(open)
+function TopNode = topKey(Open)
+% select top node
 
-keys = [[open.list.key]', rand(open.count,1)];
+keys = [[Open.List.key]', rand(Open.count,1)];
 
 % search for node with min cost
-[~,sort_inds]=sortrows(keys);
-top_key_ind = sort_inds(1);
+[~,sortInds]=sortrows(keys);
+topKeyInd = sortInds(1);
 
-topnode = open.list(top_key_ind);
-topnode.ind = top_key_ind;
+TopNode = Open.List(topKeyInd);
+TopNode.ind = topKeyInd;
 
-if keys(top_key_ind,1)==inf
+if keys(topKeyInd,1)==inf
     disp('No Path!')
 end
 

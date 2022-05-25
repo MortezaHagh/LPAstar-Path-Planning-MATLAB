@@ -1,51 +1,57 @@
-function model=createModelLPAstar(model)
+function Model=createModelLPAstar(Model)
+% add neccessary data for LPAstar to Astar Base Model
 
-disp('Create Model LPAstar');
-
-nodes = model.nodes;
+disp('Complete Model for LPAstar');
 
 %% edge costs, G, RHS
-if strcmp(model.adj_type,'4adj')
-    q = [1 0; 0 1; 0 -1; -1 0];
-    n_adj=4;
-elseif strcmp(model.adj_type,'8adj')
-    q = [1 0; 0 1; 0 -1; -1 0; 1 1; -1 -1; 1 -1; -1 1];
-    n_adj=8;
+Nodes = Model.Nodes;
+
+switch Model.adjType
+    case '4adj'
+        ixy = [1 0; 0 1; 0 -1; -1 0];
+        nAdj=4;
+    case '8adj'
+        ixy = [1 0; 0 1; 0 -1; -1 0; 1 1; -1 -1; 1 -1; -1 1];
+        nAdj=8;
 end
 
-nodes_count = model.nodes.number(end);
-successors = cell(nodes_count,1);
-cost = inf*ones(nodes_count, nodes_count);
+nNodes = Model.Nodes.number(end);
+Successors = cell(nNodes,1);
+cost = inf*ones(nNodes, nNodes);
 
-for node=1:nodes_count
-    xNode = nodes.cord(1,node);
-    yNode = nodes.cord(2,node);
-    for k=1:n_adj
-        i=q(k,1);  j=q(k,2);
-        s_x = xNode+i;
-        s_y = yNode+j;
+for iNode=1:nNodes
+    xNode = Nodes.cord(1,iNode);
+    yNode = Nodes.cord(2,iNode);
+    for iAdj=1:nAdj
+        ix=ixy(iAdj,1);
+        iy=ixy(iAdj,2);
+        newX = xNode+ix;
+        newY = yNode+iy;
+        
         % check if the Node is within array bound
-        if( (s_x>=model.xmin && s_x<=model.xmax) && (s_y>=model.ymin && s_y<=model.ymax))
-            s_node = node+i+(j*(model.xmax-model.xmin+1));
-            successors{node} = [successors{node}, s_node];
-            if ~any(s_node==model.obstNode) && ~any(node==model.obstNode)
-                cost(node, s_node) = 1;
-                cost(s_node, node) = 1;
+        if (newX>=Model.Map.xMin && newX<=Model.Map.xMax) && (newY>=Model.Map.yMin && newY<=Model.Map.yMax)
+            newNodeNumber = iNode+ix+iy*(Model.Map.xMax-Model.Map.xMin+1);
+            Successors{iNode} = [Successors{iNode}, newNodeNumber];
+            
+            % if newNodeNumber or iNode is obstacle: increase edge cost
+            if ~any(newNodeNumber==Model.Obst.nodeNumber) && ~any(iNode==Model.Obst.nodeNumber)
+                cost(iNode, newNodeNumber) = 1;
+                cost(newNodeNumber, iNode) = 1;
             end
         end
     end
 end
 
 % G, RHS
-G = inf(1, nodes_count);
-RHS = inf(1, nodes_count);
+G = inf(1, nNodes);
+RHS = inf(1, nNodes);
 
 %% save model
-model.successors=successors;
-model.cost=cost;
-model.RHS=RHS;
-model.G=G;
-
+Model.startNode = Model.Robot.startNode;
+Model.Successors=Successors;
+Model.cost=cost;
+Model.RHS=RHS;
+Model.G=G;
 
 %% plot model
 % plotModel(model);

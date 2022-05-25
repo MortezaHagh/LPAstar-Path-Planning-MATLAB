@@ -1,18 +1,19 @@
-function path_nodes = finalPathNodes(G, model)
+function pathNodes = finalPathNodes(G, Model)
+% calculate optimap path nodes
 
 i=1;
-path_nodes = [];
-node = model.targetNode;
+pathNodes = [];
+nodeNumber = Model.Robot.targetNode;
 
-path_nodes(i) = model.targetNode;
-while node ~= model.startNode
+pathNodes(i) = nodeNumber;
+while nodeNumber ~= Model.startNode
     i = i+1;
-    pred_nodes = model.successors{node};
-    [~, ind_minG] = min(G(pred_nodes)+ model.cost(pred_nodes, node)');
-    node = pred_nodes(ind_minG);
-    path_nodes(i) = node;
+    predNodes = Model.Successors{nodeNumber};
+    [~, indMinG] = min(G(predNodes)+ Model.cost(predNodes, nodeNumber)');
+    nodeNumber = predNodes(indMinG);
+    pathNodes(i) = nodeNumber;
 end
 
-path_nodes = flip(path_nodes);
+pathNodes = flip(pathNodes);
 
 end

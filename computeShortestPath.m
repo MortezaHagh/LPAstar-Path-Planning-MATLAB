@@ -1,33 +1,35 @@
-function [G, RHS, open] = computeShortestPath(G, RHS, open, model)
+function [G, RHS, Open] = computeShortestPath(G, RHS, Open, Model)
+% computeShortestPath between current startNode and targetNode
+
 
 % select top key
-topnode = topKey(open);
+TopNode = topKey(Open);
 
 % update goal_key
-goal.node = model.targetNode;
-goal.key = min(G(goal.node), RHS(goal.node))*[1; 1];
+Goal.nodeNumber = Model.Robot.targetNode;
+Goal.key = min(G(Goal.nodeNumber), RHS(Goal.nodeNumber))*[1; 1];
 
-while compareKeys(topnode.key, goal.key) || RHS(goal.node)~=G(goal.node)
+while compareKeys(TopNode.key, Goal.key) || RHS(Goal.nodeNumber)~=G(Goal.nodeNumber)
     
     % remove topkey from open
-    open.list(topnode.ind)=[];
-    open.count = open.count-1;
+    Open.List(TopNode.ind)=[];
+    Open.count = Open.count-1;
     
     % update vertex
-    nodes_for_update = model.successors{topnode.node};
-    if G(topnode.node)>RHS(topnode.node)
-        G(topnode.node) = RHS(topnode.node);
+    nodesForUpdate = Model.Successors{TopNode.nodeNumber};
+    if G(TopNode.nodeNumber)>RHS(TopNode.nodeNumber)
+        G(TopNode.nodeNumber) = RHS(TopNode.nodeNumber);
     else
-        G(topnode.node) = inf;
-        nodes_for_update(end+1) = topnode.node;
+        G(TopNode.nodeNumber) = inf;
+        nodesForUpdate(end+1) = TopNode.nodeNumber;
     end
-    [open, RHS] = updateVertex(open, RHS, G, nodes_for_update, model);
+    [Open, RHS] = updateVertex(Open, RHS, G, nodesForUpdate, Model);
     
     % select top key
-    topnode = topKey(open);
+    TopNode = topKey(Open);
     
     % update goal_key
-    goal.key = min(G(goal.node), RHS(goal.node))*[1; 1];
+    Goal.key = min(G(Goal.nodeNumber), RHS(Goal.nodeNumber))*[1; 1];
     
 end
 
