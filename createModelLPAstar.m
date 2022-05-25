@@ -15,7 +15,7 @@ switch Model.adjType
         nAdj=8;
 end
 
-nNodes = Model.Nodes.number(end);
+nNodes = Model.Nodes.count;
 Successors = cell(nNodes,1);
 cost = inf*ones(nNodes, nNodes);
 
