@@ -6,12 +6,41 @@ pathNodes = [];
 nodeNumber = Model.Robot.targetNode;
 
 pathNodes(i) = nodeNumber;
-while nodeNumber ~= Model.startNode
-    i = i+1;
-    predNodes = Model.Successors{nodeNumber};
-    [~, indMinG] = min(G(predNodes)+ Model.cost(predNodes, nodeNumber)');
-    nodeNumber = predNodes(indMinG);
-    pathNodes(i) = nodeNumber;
+
+switch Model.expandMethod
+    case 'random'
+        while nodeNumber ~= Model.startNode
+            i = i+1;
+            predNodes = Model.Successors{nodeNumber};
+            [~, indMinG] = min(G(predNodes)+ Model.cost(predNodes, nodeNumber)');
+            nodeNumber = predNodes(indMinG);
+            pathNodes(i) = nodeNumber;
+        end
+        
+    case 'heading'
+        while nodeNumber ~= Model.startNode
+            i = i+1;
+            predNodes = Model.Successors{nodeNumber};
+            
+            if i==2
+                [~, indMinG] = min(G(predNodes)+ Model.cost(predNodes, nodeNumber)');
+                nodeNumber = predNodes(indMinG);
+                pathNodes(i) = nodeNumber;
+                
+                x1 = Model.Robot.xt;
+                y1 = Model.Robot.yt;
+                xy2 = Model.Nodes.cord(:, nodeNumber);
+                currentDir = atan2(xy2(2)-y1, xy2(1)-x1);
+            end
+            
+            if i>2
+                dTheta = turnCost(nodeNumber, predNodes, Model, currentDir);
+                [~, sortInd] = sortrows([G(predNodes)+ Model.cost(predNodes, nodeNumber)'; abs(dTheta)]');
+                nodeNumber = predNodes(sortInd(1));
+                pathNodes(i) = nodeNumber;
+                currentDir = currentDir+dTheta(sortInd(1));
+            end
+        end
 end
 
 pathNodes = flip(pathNodes);

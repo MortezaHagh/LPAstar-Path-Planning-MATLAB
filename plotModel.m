@@ -13,9 +13,8 @@ xt=Model.Robot.xt;
 yt=Model.Robot.yt;
 
 figure(1)
-axis([xMin-1,xMax+1,yMin-1,yMax+1])
 axis equal
-grid on
+axis([xMin-1,xMax+1,yMin-1,yMax+1])
 box on
 hold on
 

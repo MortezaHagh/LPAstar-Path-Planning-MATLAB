@@ -15,28 +15,41 @@ switch Model.adjType
         nAdj=8;
 end
 
+% euclidean manhattan
+switch Model.distType
+    case 'manhattan'
+        edgeLength=2;
+    case 'euclidean'
+        edgeLength=sqrt(2);
+end
+
 nNodes = Model.Nodes.count;
 Successors = cell(nNodes,1);
 cost = inf*ones(nNodes, nNodes);
 
 for iNode=1:nNodes
-    xNode = Nodes.cord(1,iNode);
-    yNode = Nodes.cord(2,iNode);
-    for iAdj=1:nAdj
-        ix=ixy(iAdj,1);
-        iy=ixy(iAdj,2);
-        newX = xNode+ix;
-        newY = yNode+iy;
-        
-        % check if the Node is within array bound
-        if (newX>=Model.Map.xMin && newX<=Model.Map.xMax) && (newY>=Model.Map.yMin && newY<=Model.Map.yMax)
-            newNodeNumber = iNode+ix+iy*(Model.Map.xMax-Model.Map.xMin+1);
-            Successors{iNode} = [Successors{iNode}, newNodeNumber];
+    if ~any(iNode==Model.Obst.nodeNumber)
+        xNode = Nodes.cord(1,iNode);
+        yNode = Nodes.cord(2,iNode);
+        for iAdj=1:nAdj
+            ix=ixy(iAdj,1);
+            iy=ixy(iAdj,2);
+            newX = xNode+ix;
+            newY = yNode+iy;
             
-            % if newNodeNumber or iNode is obstacle: increase edge cost
-            if ~any(newNodeNumber==Model.Obst.nodeNumber) && ~any(iNode==Model.Obst.nodeNumber)
-                cost(iNode, newNodeNumber) = 1;
-                cost(newNodeNumber, iNode) = 1;
+            % check if the Node is within array bound
+            if(newX>=Model.Map.xMin && newX<=Model.Map.xMax) && (newY>=Model.Map.yMin && newY<=Model.Map.yMax)
+                newNodeNumber = iNode+ix+iy*(Model.Map.xMax-Model.Map.xMin+1);
+                
+                if ~any(newNodeNumber==Model.Obst.nodeNumber)
+                    Successors{iNode} = [Successors{iNode}, newNodeNumber];
+                    if ix~=0 && iy~=0
+                        cost(iNode, newNodeNumber) = edgeLength;
+                    else
+                        cost(iNode, newNodeNumber) = 1;
+                    end
+                    
+                end
             end
         end
     end
