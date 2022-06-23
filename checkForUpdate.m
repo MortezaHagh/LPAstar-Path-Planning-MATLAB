@@ -6,8 +6,7 @@ if t==4
     newobstNode = [newobstNode 36];
     Model.Obst.nodeNumber(end+1) = 36;
     Model.Obst.count = Model.Obst.count+1;
-    Model.cost(:, newobstNode(end)) = 1000;
-    Model.cost(newobstNode(end, :)) = 1000;
+    Model.Predecessors{newobstNode,2} = Model.Predecessors{newobstNode,2}+inf;
     
     % update vertex
     nodesForUpdate = newobstNode(end);

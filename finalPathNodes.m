@@ -11,8 +11,8 @@ switch Model.expandMethod
     case 'random'
         while nodeNumber ~= Model.startNode
             i = i+1;
-            predNodes = Model.Successors{nodeNumber};
-            [~, indMinG] = min(G(predNodes)+ Model.cost(predNodes, nodeNumber)');
+            predNodes = Model.Predecessors{nodeNumber,1};
+            [~, indMinG] = min(G(predNodes)+ Model.Predecessors{nodeNumber,2});
             nodeNumber = predNodes(indMinG);
             pathNodes(i) = nodeNumber;
         end
@@ -20,10 +20,10 @@ switch Model.expandMethod
     case 'heading'
         while nodeNumber ~= Model.startNode
             i = i+1;
-            predNodes = Model.Successors{nodeNumber};
+            predNodes = Model.Predecessors{nodeNumber,1};
             
             if i==2
-                [~, indMinG] = min(G(predNodes)+ Model.cost(predNodes, nodeNumber)');
+                [~, indMinG] = min(G(predNodes)+ Model.Predecessors{nodeNumber,2});
                 nodeNumber = predNodes(indMinG);
                 pathNodes(i) = nodeNumber;
                 
@@ -35,7 +35,7 @@ switch Model.expandMethod
             
             if i>2
                 dTheta = turnCost(nodeNumber, predNodes, Model, currentDir);
-                [~, sortInd] = sortrows([G(predNodes)+ Model.cost(predNodes, nodeNumber)'; abs(dTheta)]');
+                [~, sortInd] = sortrows([G(predNodes)+ Model.Predecessors{nodeNumber,2}; abs(dTheta)]');
                 nodeNumber = predNodes(sortInd(1));
                 pathNodes(i) = nodeNumber;
                 currentDir = currentDir+dTheta(sortInd(1));

@@ -2,8 +2,8 @@ function [Open, RHS] = updateVertex(Open, RHS, G, nodesForUpdate, Model)
 
 for nodeNumber=nodesForUpdate
     if nodeNumber~=Model.startNode
-        predNodes = Model.Successors{nodeNumber};
-        [valMinG, ~] = min(G(predNodes) + Model.cost(predNodes, nodeNumber)');
+        predNodes = Model.Predecessors{nodeNumber,1};
+        [valMinG, ~] = min(G(predNodes) + Model.Predecessors{nodeNumber,2});
         RHS(nodeNumber) = valMinG;
     end
     

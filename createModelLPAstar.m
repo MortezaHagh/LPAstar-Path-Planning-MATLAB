@@ -24,8 +24,8 @@ switch Model.distType
 end
 
 nNodes = Model.Nodes.count;
-Successors = cell(nNodes,1);
-cost = inf*ones(nNodes, nNodes);
+Successors = cell(nNodes,2);
+Predecessors = cell(nNodes,2);
 
 for iNode=1:nNodes
     if ~any(iNode==Model.Obst.nodeNumber)
@@ -42,13 +42,15 @@ for iNode=1:nNodes
                 newNodeNumber = iNode+ix+iy*(Model.Map.xMax-Model.Map.xMin+1);
                 
                 if ~any(newNodeNumber==Model.Obst.nodeNumber)
-                    Successors{iNode} = [Successors{iNode}, newNodeNumber];
+                    Successors{iNode,1} = [Successors{iNode}, newNodeNumber];
+                    Predecessors{newNodeNumber,1} =  [Predecessors{newNodeNumber,1}, iNode];
                     if ix~=0 && iy~=0
-                        cost(iNode, newNodeNumber) = edgeLength;
+                        cost = edgeLength;
                     else
-                        cost(iNode, newNodeNumber) = 1;
+                        cost = 1;
                     end
-                    
+                    Successors{iNode,2} = [Successors{iNode,2}, cost];
+                    Predecessors{newNodeNumber,2} =  [Predecessors{newNodeNumber,2}, cost];
                 end
             end
         end
@@ -61,8 +63,8 @@ RHS = inf(1, nNodes);
 
 %% save model
 Model.startNode = Model.Robot.startNode;
+Model.Predecessors=Predecessors;
 Model.Successors=Successors;
-Model.cost=cost;
 Model.RHS=RHS;
 Model.G=G;
 

@@ -11,5 +11,4 @@ for iNode = succNodes
     i=i+1;
 end
 
-
 end

@@ -16,7 +16,7 @@ while compareKeys(TopNode.key, Goal.key) || RHS(Goal.nodeNumber)~=G(Goal.nodeNum
     Open.count = Open.count-1;
     
     % update vertex
-    nodesForUpdate = Model.Successors{TopNode.nodeNumber};
+    nodesForUpdate = Model.Successors{TopNode.nodeNumber,1};
     if G(TopNode.nodeNumber)>RHS(TopNode.nodeNumber)
         G(TopNode.nodeNumber) = RHS(TopNode.nodeNumber);
     else
